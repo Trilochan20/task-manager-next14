@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import "./globals.css";
+import "atropos/css";
 
-const kanit = Kanit({ subsets: ["latin"], weight: ["100", "400", "700"] });
+const kanit = Kanit({
+  subsets: ["latin"],
+  weight: ["100", "400", "500", "700"],
+});
 
 export const metadata: Metadata = {
   title: "Task manger",

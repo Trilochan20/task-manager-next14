@@ -115,7 +115,7 @@ function DraggableDiv() {
 
   const getItemClass = (columnId: string, itemId: string) => {
     const baseClass =
-      "user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg font-sm";
+      "user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg font-sm backdrop-filter backdrop-blur-lg bg-opacity-30";
     const columnClass =
       {
         toDo: "bg-blue-500 border-blue-500",
@@ -154,7 +154,7 @@ function DraggableDiv() {
       case "done":
         return "border-emerald-500";
       default:
-        return "border-gray-500";
+        return "border-gray-200";
     }
   };
 
@@ -175,12 +175,13 @@ function DraggableDiv() {
                 {column.name}
               </h2>
               <Atropos
-                activeOffset={30}
+                activeOffset={40}
                 shadowScale={0.5}
-                className="custom-shadow"
-                // onEnter={() => console.log("Enter")}
-                // onLeave={() => console.log("Leave")}
-                // onRotate={(x, y) => console.log("Rotate", x, y)}
+                rotate={true}
+                rotateTouch={true}
+                onEnter={() => console.log("Enter")}
+                onLeave={() => console.log("Leave")}
+                onRotate={(x, y) => console.log("Rotate", x, y)}
               >
                 <div
                   className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 
@@ -202,12 +203,10 @@ function DraggableDiv() {
                         }
                         onDragOver={onDragOver}
                         data-index={index}
-                        className={`user-select-none cursor-grab p-4 mb-4 min-h-[50px] 
-                        backdrop-filter backdrop-blur-lg bg-opacity-30
-                         text-white rounded-lg text-sm ${getItemClass(
-                           columnId,
-                           item.id
-                         )} ${getBorderColorClass(columnId)}`}
+                        className={`${getItemClass(
+                          columnId,
+                          item.id
+                        )} ${getBorderColorClass(columnId)}`}
                       >
                         {item.content}
                       </div>
