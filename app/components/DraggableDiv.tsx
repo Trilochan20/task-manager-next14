@@ -211,9 +211,9 @@ function DraggableDiv() {
                 shadowScale={0.5}
                 rotate={true}
                 rotateTouch={true}
-                onEnter={() => console.log("Enter")}
-                onLeave={() => console.log("Leave")}
-                onRotate={(x, y) => console.log("Rotate", x, y)}
+                // onEnter={() => console.log("Enter")}
+                // onLeave={() => console.log("Leave")}
+                // onRotate={(x, y) => console.log("Rotate", x, y)}
               >
                 <div
                   className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 

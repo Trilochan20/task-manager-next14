@@ -32,9 +32,9 @@ export function AddTaskButton() {
               X
             </Button>
           </AlertDialogTitle>
-
-          <AlertDialogDescription>
-            <AddTaskForm />
+          <AddTaskForm />
+          <AlertDialogDescription className="sr-only">
+            Add your task
           </AlertDialogDescription>
         </AlertDialogHeader>
       </AlertDialogContent>
