@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { Atropos } from "atropos/react";
+import { useSpring, animated } from "@react-spring/web";
 
 interface Task {
   id: string;
@@ -86,15 +87,20 @@ const onDrop = (
   } else {
     const column = columns[sourceColumnId];
     const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(
-      copiedItems.findIndex((item) => item.id === itemId),
-      1
+    const draggedItemIndex = copiedItems.findIndex(
+      (item) => item.id === itemId
     );
-    copiedItems.splice(
-      parseInt(event.currentTarget.dataset.index || "0", 10),
-      0,
-      removed
-    );
+    const [removed] = copiedItems.splice(draggedItemIndex, 1);
+
+    // Get the drop index from the event's target
+    const dropTarget = event.target as HTMLElement;
+    const dropIndex = Array.from(
+      dropTarget?.parentNode?.children || []
+    ).indexOf(dropTarget);
+
+    // Insert the item at the correct position
+    copiedItems.splice(dropIndex, 0, removed);
+
     setColumns({
       ...columns,
       [sourceColumnId]: {
@@ -112,10 +118,14 @@ const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 function DraggableDiv() {
   const [columns, setColumns] = useState<Columns>(taskStatus);
   const [draggingItem, setDraggingItem] = useState<string | null>(null);
+  const [springProps, setSpring] = useSpring(() => ({
+    scale: 1,
+    config: { tension: 300, friction: 20 },
+  }));
 
   const getItemClass = (columnId: string, itemId: string) => {
-    const baseClass =
-      "user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg font-sm backdrop-filter backdrop-blur-lg bg-opacity-30";
+    const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white 
+      rounded-lg font-sm backdrop-filter backdrop-blur-lg bg-opacity-30`;
     const columnClass =
       {
         toDo: "bg-blue-500 border-blue-500",
@@ -158,6 +168,28 @@ function DraggableDiv() {
     }
   };
 
+  const handleDragStart = (
+    event: React.DragEvent<HTMLDivElement>,
+    itemId: string,
+    columnId: string
+  ) => {
+    onDragStart(event, itemId, columnId);
+    setDraggingItem(itemId);
+    setSpring({ scale: 1.1 });
+  };
+
+  const handleDragEnd = () => {
+    setDraggingItem(null);
+    setSpring({ scale: 1 });
+  };
+
+  const handleDrop = (
+    event: React.DragEvent<HTMLDivElement>,
+    columnId: string
+  ) => {
+    onDrop(event, columnId, columns, setColumns);
+  };
+
   return (
     <div>
       <div className="flex justify-center h-screen items-center">
@@ -190,26 +222,26 @@ function DraggableDiv() {
                 >
                   {column.items.map((item, index) => {
                     return (
-                      <div
+                      <animated.div
                         data-atropos-offset="15"
-                        // data-atropos-opacity="1;1"
                         key={item.id}
                         draggable
                         onDragStart={(event) =>
-                          onDragStart(event, item.id, columnId)
+                          handleDragStart(event, item.id, columnId)
                         }
-                        onDrop={(event) =>
-                          onDrop(event, columnId, columns, setColumns)
-                        }
+                        onDragEnd={handleDragEnd}
+                        onDrop={(event) => handleDrop(event, columnId)}
                         onDragOver={onDragOver}
                         data-index={index}
+                        data-item-id={item.id}
                         className={`${getItemClass(
                           columnId,
                           item.id
                         )} ${getBorderColorClass(columnId)}`}
+                        style={springProps}
                       >
                         {item.content}
-                      </div>
+                      </animated.div>
                     );
                   })}
                 </div>
