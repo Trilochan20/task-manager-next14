@@ -73,7 +73,7 @@ const config = {
         "accordion-up": "accordion-up 0.2s ease-out",
       },
       backgroundImage: {
-        'deep-dusk': "url('/deep-dusk-006.jpg')",
+        'deep-dusk': "url('/deep-dusk-006.webp')",
       },
     },
   },

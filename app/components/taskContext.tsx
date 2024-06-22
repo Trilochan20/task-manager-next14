@@ -15,7 +15,7 @@ const initialTaskStatus: Columns = {
     name: "Requested",
     items: [],
   },
-  toDo: {
+  accepted: {
     name: "Accepted",
     items: [],
   },
