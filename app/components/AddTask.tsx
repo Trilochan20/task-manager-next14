@@ -3,7 +3,6 @@ import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
@@ -12,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useTasks } from "./taskContext";
 
 export function AddTaskButton() {
   const [open, setOpen] = useState(false);
@@ -51,10 +51,23 @@ export function AddTaskForm() {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>();
 
+  const { dispatch } = useTasks(); // Use the useTasks hook to get dispatch
+
   const onSubmit = (data: FormData) => {
-    console.log(data);
+    // Generate a unique ID for the new task
+    const newTaskId = crypto.randomUUID();
+    // Dispatch the ADD_TASK action to the task reducer
+    dispatch({
+      type: "ADD_TASK",
+      payload: {
+        columnId: "requested", // Assuming you want to add the new task to the "toDo" column
+        task: { id: newTaskId, content: data.task },
+      },
+    });
+    reset();
   };
 
   return (

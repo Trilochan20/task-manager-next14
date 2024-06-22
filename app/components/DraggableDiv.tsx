@@ -1,48 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Atropos } from "atropos/react";
 import { useSpring, animated } from "@react-spring/web";
-
-interface Task {
-  id: string;
-  content: string;
-}
-
-interface Column {
-  name: string;
-  items: Task[];
-}
-
-interface Columns {
-  [key: string]: Column;
-}
-
-const tasks: Task[] = [
-  { id: "1", content: "First task" },
-  { id: "2", content: "Second task" },
-  { id: "3", content: "Third task" },
-  { id: "4", content: "Fourth task" },
-  { id: "5", content: "Fifth task" },
-];
-
-const taskStatus: Columns = {
-  requested: {
-    name: "Requested",
-    items: tasks,
-  },
-  toDo: {
-    name: "Accepted",
-    items: [],
-  },
-  inProgress: {
-    name: "In Progress",
-    items: [],
-  },
-  done: {
-    name: "Done",
-    items: [],
-  },
-};
+import { useTasks } from "./taskContext";
 
 const onDragStart = (
   event: React.DragEvent<HTMLDivElement>,
@@ -53,79 +13,21 @@ const onDragStart = (
   event.dataTransfer.setData("sourceColumnId", sourceColumnId);
 };
 
-const onDrop = (
-  event: React.DragEvent<HTMLDivElement>,
-  destinationColumnId: string,
-  columns: Columns,
-  setColumns: React.Dispatch<React.SetStateAction<Columns>>
-) => {
-  event.preventDefault();
-  const itemId = event.dataTransfer.getData("itemId");
-  const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
-
-  if (sourceColumnId !== destinationColumnId) {
-    const sourceColumn = columns[sourceColumnId];
-    const destColumn = columns[destinationColumnId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(
-      sourceItems.findIndex((item) => item.id === itemId),
-      1
-    );
-    destItems.splice(destItems.length, 0, removed);
-    setColumns({
-      ...columns,
-      [sourceColumnId]: {
-        ...sourceColumn,
-        items: sourceItems,
-      },
-      [destinationColumnId]: {
-        ...destColumn,
-        items: destItems,
-      },
-    });
-  } else {
-    const column = columns[sourceColumnId];
-    const copiedItems = [...column.items];
-    const draggedItemIndex = copiedItems.findIndex(
-      (item) => item.id === itemId
-    );
-    const [removed] = copiedItems.splice(draggedItemIndex, 1);
-
-    // Get the drop index from the event's target
-    const dropTarget = event.target as HTMLElement;
-    const dropIndex = Array.from(
-      dropTarget?.parentNode?.children || []
-    ).indexOf(dropTarget);
-
-    // Insert the item at the correct position
-    copiedItems.splice(dropIndex, 0, removed);
-
-    setColumns({
-      ...columns,
-      [sourceColumnId]: {
-        ...column,
-        items: copiedItems,
-      },
-    });
-  }
-};
-
 const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
   event.preventDefault();
 };
 
 function DraggableDiv() {
-  const [columns, setColumns] = useState<Columns>(taskStatus);
-  const [draggingItem, setDraggingItem] = useState<string | null>(null);
-  const [springProps, setSpring] = useSpring(() => ({
+  const { state: columns, dispatch } = useTasks();
+  const [draggingItem, setDraggingItem] = React.useState<string | null>(null);
+  const [springProps, api] = useSpring(() => ({
     scale: 1,
     config: { tension: 300, friction: 20 },
   }));
 
   const getItemClass = (columnId: string, itemId: string) => {
-    const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white 
-      rounded-lg font-sm backdrop-filter backdrop-blur-lg bg-opacity-30`;
+    const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg 
+      font-sm backdrop-filter backdrop-blur-lg bg-opacity-30`;
     const columnClass =
       {
         toDo: "bg-blue-500 border-blue-500",
@@ -138,34 +40,29 @@ function DraggableDiv() {
       draggingItem === itemId
         ? "transition-transform duration-300 ease-in-out"
         : "";
-
     return `${baseClass} ${columnClass} ${draggingClass}`;
   };
 
   const getTextColorClass = (columnId: string) => {
-    switch (columnId) {
-      case "toDo":
-        return "text-blue-500";
-      case "inProgress":
-        return "text-orange-500";
-      case "done":
-        return "text-emerald-500";
-      default:
-        return "text-gray-500";
-    }
+    return (
+      {
+        toDo: "text-blue-500",
+        inProgress: "text-orange-500",
+        done: "text-emerald-500",
+        default: "text-gray-200",
+      }[columnId] || "text-gray-200"
+    );
   };
 
   const getBorderColorClass = (columnId: string) => {
-    switch (columnId) {
-      case "toDo":
-        return "border-blue-500";
-      case "inProgress":
-        return "border-orange-500";
-      case "done":
-        return "border-emerald-500";
-      default:
-        return "border-gray-200";
-    }
+    return (
+      {
+        toDo: "border-blue-500",
+        inProgress: "border-orange-500",
+        done: "border-emerald-500",
+        default: "border-gray-200",
+      }[columnId] || "border-gray-200"
+    );
   };
 
   const handleDragStart = (
@@ -175,81 +72,95 @@ function DraggableDiv() {
   ) => {
     onDragStart(event, itemId, columnId);
     setDraggingItem(itemId);
-    setSpring({ scale: 1.1 });
+    api.start({ scale: 1.1 });
   };
 
   const handleDragEnd = () => {
     setDraggingItem(null);
-    setSpring({ scale: 1 });
+    api.start({ scale: 1 });
   };
 
   const handleDrop = (
     event: React.DragEvent<HTMLDivElement>,
     columnId: string
   ) => {
-    onDrop(event, columnId, columns, setColumns);
+    event.preventDefault();
+    const itemId = event.dataTransfer.getData("itemId");
+    const sourceColumnId = event.dataTransfer.getData("sourceColumnId");
+
+    const dropTarget = event.target as HTMLElement;
+    const dropIndex = Array.from(dropTarget.parentNode?.children || []).indexOf(
+      dropTarget
+    );
+
+    if (sourceColumnId === columnId) {
+      dispatch({
+        type: "REORDER_TASK",
+        payload: {
+          columnId: columnId,
+          taskId: itemId,
+          newIndex: dropIndex,
+        },
+      });
+    } else {
+      dispatch({
+        type: "MOVE_TASK",
+        payload: {
+          sourceId: sourceColumnId,
+          destinationId: columnId,
+          taskId: itemId,
+        },
+      });
+    }
   };
 
   return (
-    <div>
-      <div className="flex justify-center h-screen items-center">
-        {Object.entries(columns).map(([columnId, column], index) => {
-          return (
+    <div className="flex justify-center h-screen items-center">
+      {Object.entries(columns).map(([columnId, column]) => (
+        <div
+          className="flex flex-col items-center"
+          key={columnId}
+          onDrop={(event) => handleDrop(event, columnId)}
+          onDragOver={onDragOver}
+        >
+          <h2 className={`text-2xl font-bold ${getTextColorClass(columnId)}`}>
+            {column.name}
+          </h2>
+          <Atropos
+            activeOffset={40}
+            shadowScale={0.5}
+            rotate={true}
+            rotateTouch={true}
+          >
             <div
-              className="flex flex-col items-center"
-              key={columnId}
-              onDrop={(event) => onDrop(event, columnId, columns, setColumns)}
-              onDragOver={onDragOver}
+              className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 
+              rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border ${getBorderColorClass(
+                columnId
+              )}`}
             >
-              <h2
-                className={`text-2xl font-bold ${getTextColorClass(columnId)}`}
-              >
-                {column.name}
-              </h2>
-              <Atropos
-                activeOffset={40}
-                shadowScale={0.5}
-                rotate={true}
-                rotateTouch={true}
-                // onEnter={() => console.log("Enter")}
-                // onLeave={() => console.log("Leave")}
-                // onRotate={(x, y) => console.log("Rotate", x, y)}
-              >
-                <div
-                  className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 
-                  rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border
-                   ${getBorderColorClass(columnId)}`}
+              {column.items.map((item, index) => (
+                <animated.div
+                  data-atropos-offset="15"
+                  key={item.id}
+                  draggable
+                  onDragStart={(event) =>
+                    handleDragStart(event, item.id, columnId)
+                  }
+                  onDragEnd={handleDragEnd}
+                  onDrop={(event) => handleDrop(event, columnId)}
+                  onDragOver={onDragOver}
+                  data-index={index}
+                  data-item-id={item.id}
+                  className={getItemClass(columnId, item.id)}
+                  style={springProps}
                 >
-                  {column.items.map((item, index) => {
-                    return (
-                      <animated.div
-                        data-atropos-offset="15"
-                        key={item.id}
-                        draggable
-                        onDragStart={(event) =>
-                          handleDragStart(event, item.id, columnId)
-                        }
-                        onDragEnd={handleDragEnd}
-                        onDrop={(event) => handleDrop(event, columnId)}
-                        onDragOver={onDragOver}
-                        data-index={index}
-                        data-item-id={item.id}
-                        className={`${getItemClass(
-                          columnId,
-                          item.id
-                        )} ${getBorderColorClass(columnId)}`}
-                        style={springProps}
-                      >
-                        {item.content}
-                      </animated.div>
-                    );
-                  })}
-                </div>
-              </Atropos>
+                  {item.content}
+                </animated.div>
+              ))}
             </div>
-          );
-        })}
-      </div>
+          </Atropos>
+        </div>
+      ))}
     </div>
   );
 }

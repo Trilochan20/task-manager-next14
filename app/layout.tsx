@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Kanit } from "next/font/google";
 import "./globals.css";
 import "atropos/css";
+import { TaskProvider } from "./components/taskContext";
 
 const kanit = Kanit({
   subsets: ["latin"],
@@ -20,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={kanit.className}>{children}</body>
+      <body className={kanit.className}>
+        <TaskProvider>{children}</TaskProvider>
+      </body>
     </html>
   );
 }

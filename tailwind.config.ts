@@ -72,6 +72,9 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        'deep-dusk': "url('/deep-dusk-006.jpg')",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
