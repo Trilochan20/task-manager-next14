@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useReducer, useContext } from "react";
+import React, {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { Columns } from "../types/types";
 import { taskReducer } from "./taskReducer";
 
@@ -32,12 +38,45 @@ const initialTaskStatus: Columns = {
 export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [state, dispatch] = useReducer(taskReducer, initialTaskStatus);
+  const [state, setState] = useState<Columns>(initialTaskStatus);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    const loadTasksFromLocalStorage = () => {
+      if (typeof window !== "undefined") {
+        const savedTasks = localStorage.getItem("tasks");
+        if (savedTasks) {
+          setState(JSON.parse(savedTasks));
+        }
+      }
+      setIsLoaded(true);
+    };
+
+    loadTasksFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("tasks", JSON.stringify(state));
+    }
+  }, [state, isLoaded]);
+
+  const contextValue = React.useMemo(() => {
+    return {
+      state,
+      dispatch: (action: any) => {
+        const newState = taskReducer(state, action);
+        setState(newState);
+      },
+    };
+  }, [state]);
+
+  if (!isLoaded) {
+    return null; // or a loading spinner
+  }
 
   return (
-    <TaskContext.Provider value={{ state, dispatch }}>
-      {children}
-    </TaskContext.Provider>
+    <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>
   );
 };
 

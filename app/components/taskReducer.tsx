@@ -1,3 +1,5 @@
+"use client";
+
 import { Columns } from "../types/types";
 
 type Action =

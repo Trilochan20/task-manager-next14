@@ -21,7 +21,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={kanit.className}>
+      <body
+        className={`${kanit.className} bg-deep-dusk bg-cover bg-center min-h-screen`}
+      >
         <TaskProvider>{children}</TaskProvider>
       </body>
     </html>

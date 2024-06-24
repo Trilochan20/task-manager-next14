@@ -30,7 +30,7 @@ function DraggableDiv() {
       font-sm backdrop-filter backdrop-blur-lg bg-opacity-30`;
     const columnClass =
       {
-        toDo: "bg-blue-500 border-blue-500",
+        accepted: "bg-blue-500 border-blue-500",
         inProgress: "bg-orange-500 border-orange-500",
         done: "bg-green-500 border-green-500",
         default: "bg-gray-500 border-gray-500",
@@ -46,7 +46,7 @@ function DraggableDiv() {
   const getTextColorClass = (columnId: string) => {
     return (
       {
-        toDo: "text-blue-500",
+        accepted: "text-blue-500",
         inProgress: "text-orange-500",
         done: "text-emerald-500",
         default: "text-gray-200",
@@ -57,7 +57,7 @@ function DraggableDiv() {
   const getBorderColorClass = (columnId: string) => {
     return (
       {
-        toDo: "border-blue-500",
+        accepted: "border-blue-500",
         inProgress: "border-orange-500",
         done: "border-emerald-500",
         default: "border-gray-200",
@@ -134,7 +134,7 @@ function DraggableDiv() {
           >
             <div
               className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 
-              rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border ${getBorderColorClass(
+              rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border   ${getBorderColorClass(
                 columnId
               )}`}
             >
@@ -165,4 +165,12 @@ function DraggableDiv() {
   );
 }
 
-export default DraggableDiv;
+import ClientSideComponent from "./ClientSideComponent";
+
+export default function DraggableDivWrapped() {
+  return (
+    <ClientSideComponent>
+      <DraggableDiv />
+    </ClientSideComponent>
+  );
+}
