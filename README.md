@@ -16,3 +16,5 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 - uses Atropos.js for 3d style columns
 - uses react-spring for animations
+
+DEMO: [https://task-manager-board.vercel.app/](https://task-manager-board.vercel.app/)
