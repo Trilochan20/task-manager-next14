@@ -77,7 +77,10 @@ const config = {
       },
       boxShadow: {
         'card': '0 0 0 4px #fff,inset 0 0 18px 1px #00000005,inset 0 1px 1px #0000001f,inset 0 2px 4px #0000000a,0 8px 3px #0000000a,0 6px 2px #0000000f,0 5px 1px #00000014,0 0 4px 2px #00000005',
-      }
+      },
+      fontFamily: {
+        'playwrite-ng': ['Playwrite NG Modern', 'sans-serif'],
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

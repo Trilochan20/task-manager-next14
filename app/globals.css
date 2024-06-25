@@ -1,7 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NG+Modern:wght@100..400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
   @layer base {
     :root {
       --background: 0 0% 100%;
@@ -71,7 +71,7 @@
       @apply border-border;
     }
     body {
-      @apply bg-deep-dusk  bg-cover bg-center ;
+      @apply bg-cover bg-center ;
     }
     body {
       border-image: linear-gradient(rgb(32 18 18 / 83%), rgb(0 0 0 / 68%)) 1 fill;

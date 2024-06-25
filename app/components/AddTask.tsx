@@ -35,14 +35,15 @@ export function AddTaskButton() {
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger asChild className="fixed bottom-8 right-8">
-        <Button variant="outline">Add</Button>
+        <Button className="bg-transparent hover:bg-gray-100 border border-gray-100 text-gray-100 hover:text-gray-900 ">
+          Add
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent className="backdrop-filter backdrop-blur-lg bg-opacity-10 bg-gray-100 min-h-[500px] border-xs border-gray-600">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-gray-100 flex justify-between">
             <div>Add New Task</div>
             <Button
-              //   variant="ghost"
               className=" bg-transparent text-gray-200 hover:text-gray-200"
               onClick={() => setOpen(false)}
             >

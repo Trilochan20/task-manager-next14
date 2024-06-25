@@ -27,7 +27,7 @@ function DraggableDiv() {
 
   const getItemClass = (columnId: string, itemId: string) => {
     const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg 
-      font-sm backdrop-filter backdrop-blur-lg bg-opacity-30`;
+      text-xs font-playwrite-ng tracking-wider font-bold backdrop-filter backdrop-blur-lg bg-opacity-30`;
     const columnClass =
       {
         accepted: "bg-blue-500 border-blue-500",
