@@ -1,8 +1,12 @@
 "use client";
 import React from "react";
-import { Atropos } from "atropos/react";
-import { useSpring, animated } from "@react-spring/web";
+import { animated } from "@react-spring/web";
 import { useTasks } from "./taskContext";
+import {
+  getItemClass,
+  getTextColorClass,
+  getBorderColorClass,
+} from "./classList";
 
 const onDragStart = (
   event: React.DragEvent<HTMLDivElement>,
@@ -20,46 +24,6 @@ const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 function DraggableDiv() {
   const { state: columns, dispatch } = useTasks();
   const [draggingItem, setDraggingItem] = React.useState<string | null>(null);
-
-  const getItemClass = (columnId: string, itemId: string) => {
-    const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg 
-      text-xs font-playwrite-ng tracking-wider font-bold backdrop-filter backdrop-blur-lg bg-opacity-30`;
-    const columnClass =
-      {
-        accepted: "bg-blue-500 border-blue-500",
-        inProgress: "bg-orange-500 border-orange-500",
-        done: "bg-green-500 border-green-500",
-        default: "bg-gray-500 border-gray-500",
-      }[columnId] || "bg-gray-500 border-gray-500";
-
-    const draggingClass =
-      draggingItem === itemId
-        ? "transition-transform duration-300 ease-in-out"
-        : "";
-    return `${baseClass} ${columnClass} ${draggingClass}`;
-  };
-
-  const getTextColorClass = (columnId: string) => {
-    return (
-      {
-        accepted: "text-blue-500",
-        inProgress: "text-orange-500",
-        done: "text-emerald-500",
-        default: "text-gray-200",
-      }[columnId] || "text-gray-200"
-    );
-  };
-
-  const getBorderColorClass = (columnId: string) => {
-    return (
-      {
-        accepted: "border-blue-500",
-        inProgress: "border-orange-500",
-        done: "border-emerald-500",
-        default: "border-gray-200",
-      }[columnId] || "border-gray-200"
-    );
-  };
 
   const handleDragStart = (
     event: React.DragEvent<HTMLDivElement>,
@@ -151,17 +115,18 @@ function DraggableDiv() {
                 onDragOver={onDragOver}
                 data-index={index}
                 data-item-id={item.id}
-                className={getItemClass(columnId, item.id)}
+                className={getItemClass(columnId, item.id, draggingItem)}
                 // style={springProps}
               >
                 <div className="flex justify-between items-center">
                   <span>{item.content}</span>
-                  <button
+                  <Button
+                    size="sm"
                     onClick={() => handleDelete(columnId, item.id)}
-                    className="ml-2 text-red-500 hover:text-red-700"
+                    className="ml-2 text-red-500 hover:text-red-700 bg-transparent text-gray-200 hover:text-gray-200"
                   >
                     ×
-                  </button>
+                  </Button>
                 </div>
               </animated.div>
             ))}
@@ -174,6 +139,7 @@ function DraggableDiv() {
 }
 
 import ClientSideComponent from "./ClientSideComponent";
+import { Button } from "@/components/ui/button";
 
 export default function DraggableDivWrapped() {
   return (
