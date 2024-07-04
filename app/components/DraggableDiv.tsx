@@ -20,10 +20,6 @@ const onDragOver = (event: React.DragEvent<HTMLDivElement>) => {
 function DraggableDiv() {
   const { state: columns, dispatch } = useTasks();
   const [draggingItem, setDraggingItem] = React.useState<string | null>(null);
-  const [springProps, api] = useSpring(() => ({
-    scale: 1,
-    config: { tension: 300, friction: 20 },
-  }));
 
   const getItemClass = (columnId: string, itemId: string) => {
     const baseClass = `user-select-none cursor-grab p-4 mb-4 min-h-[50px] text-white rounded-lg 
@@ -72,12 +68,10 @@ function DraggableDiv() {
   ) => {
     onDragStart(event, itemId, columnId);
     setDraggingItem(itemId);
-    api.start({ scale: 1.1 });
   };
 
   const handleDragEnd = () => {
     setDraggingItem(null);
-    api.start({ scale: 1 });
   };
 
   const handleDrop = (
@@ -146,7 +140,7 @@ function DraggableDiv() {
           >
             {column.items.map((item, index) => (
               <animated.div
-                data-atropos-offset="15"
+                // data-atropos-offset="15"
                 key={item.id}
                 draggable
                 onDragStart={(event) =>
@@ -158,7 +152,7 @@ function DraggableDiv() {
                 data-index={index}
                 data-item-id={item.id}
                 className={getItemClass(columnId, item.id)}
-                style={springProps}
+                // style={springProps}
               >
                 <div className="flex justify-between items-center">
                   <span>{item.content}</span>
