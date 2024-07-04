@@ -132,47 +132,47 @@ function DraggableDiv() {
           <h2 className={`text-2xl font-bold ${getTextColorClass(columnId)}`}>
             {column.name}
           </h2>
-          <Atropos
+          {/* <Atropos
             activeOffset={40}
             shadowScale={0.5}
             rotate={true}
             rotateTouch={true}
-          >
-            <div
-              className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] h-full
+          > */}
+          <div
+            className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] h-full
               rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border   ${getBorderColorClass(
                 columnId
               )}`}
-            >
-              {column.items.map((item, index) => (
-                <animated.div
-                  data-atropos-offset="15"
-                  key={item.id}
-                  draggable
-                  onDragStart={(event) =>
-                    handleDragStart(event, item.id, columnId)
-                  }
-                  onDragEnd={handleDragEnd}
-                  onDrop={(event) => handleDrop(event, columnId)}
-                  onDragOver={onDragOver}
-                  data-index={index}
-                  data-item-id={item.id}
-                  className={getItemClass(columnId, item.id)}
-                  style={springProps}
-                >
-                  <div className="flex justify-between items-center">
-                    <span>{item.content}</span>
-                    <button
-                      onClick={() => handleDelete(columnId, item.id)}
-                      className="ml-2 text-red-500 hover:text-red-700"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </animated.div>
-              ))}
-            </div>
-          </Atropos>
+          >
+            {column.items.map((item, index) => (
+              <animated.div
+                data-atropos-offset="15"
+                key={item.id}
+                draggable
+                onDragStart={(event) =>
+                  handleDragStart(event, item.id, columnId)
+                }
+                onDragEnd={handleDragEnd}
+                onDrop={(event) => handleDrop(event, columnId)}
+                onDragOver={onDragOver}
+                data-index={index}
+                data-item-id={item.id}
+                className={getItemClass(columnId, item.id)}
+                style={springProps}
+              >
+                <div className="flex justify-between items-center">
+                  <span>{item.content}</span>
+                  <button
+                    onClick={() => handleDelete(columnId, item.id)}
+                    className="ml-2 text-red-500 hover:text-red-700"
+                  >
+                    ×
+                  </button>
+                </div>
+              </animated.div>
+            ))}
+          </div>
+          {/* </Atropos> */}
         </div>
       ))}
     </div>
