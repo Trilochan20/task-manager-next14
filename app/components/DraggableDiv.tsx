@@ -113,6 +113,12 @@ function DraggableDiv() {
       });
     }
   };
+  const handleDelete = (columnId: string, taskId: string) => {
+    dispatch({
+      type: "DELETE_TASK",
+      payload: { columnId, taskId },
+    });
+  };
 
   return (
     <div className="flex justify-center h-screen items-center">
@@ -133,7 +139,7 @@ function DraggableDiv() {
             rotateTouch={true}
           >
             <div
-              className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] 
+              className={`m-4 bg-gray-200 p-4 w-[250px] min-h-[500px] h-full
               rounded-lg backdrop-filter backdrop-blur-lg bg-opacity-30 border   ${getBorderColorClass(
                 columnId
               )}`}
@@ -154,7 +160,15 @@ function DraggableDiv() {
                   className={getItemClass(columnId, item.id)}
                   style={springProps}
                 >
-                  {item.content}
+                  <div className="flex justify-between items-center">
+                    <span>{item.content}</span>
+                    <button
+                      onClick={() => handleDelete(columnId, item.id)}
+                      className="ml-2 text-red-500 hover:text-red-700"
+                    >
+                      ×
+                    </button>
+                  </div>
                 </animated.div>
               ))}
             </div>

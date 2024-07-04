@@ -10,9 +10,12 @@ type Action =
       payload: { columnId: string; task: { id: string; content: string } };
     }
   | {
-      // Add this block
       type: "REORDER_TASK";
       payload: { columnId: string; taskId: string; newIndex: number };
+    }
+  | {
+      type: "DELETE_TASK";
+      payload: { columnId: string; taskId: string };
     };
 
 export const taskReducer = (state: Columns, action: Action): Columns => {
@@ -62,6 +65,17 @@ export const taskReducer = (state: Columns, action: Action): Columns => {
         [columnId]: {
           ...column,
           items: currentItems,
+        },
+      };
+    }
+    case "DELETE_TASK": {
+      const { columnId, taskId } = action.payload;
+      const column = state[columnId];
+      return {
+        ...state,
+        [columnId]: {
+          ...column,
+          items: column.items.filter((item) => item.id !== taskId),
         },
       };
     }

@@ -66,7 +66,7 @@ export const TaskProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [state]);
 
   if (!isLoaded) {
-    return null; // or a loading spinner
+    return null;
   }
 
   return (

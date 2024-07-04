@@ -120,11 +120,7 @@ export function AddTaskForm() {
         type="hidden"
         {...register("columnId", { required: "Please select a column" })}
       />
-      {/* {errors.columnId && (
-        <span className="text-red-500 text-sm pt-4">
-          {errors.columnId.message}
-        </span>
-      )} */}
+
       <Button
         type="submit"
         className="bg-gray-500 hover:bg-gray-600 text-gray-100 mt-4 float-right"
