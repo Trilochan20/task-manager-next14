@@ -8,6 +8,13 @@ import {
   getBorderColorClass,
 } from "./classList";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+
 const onDragStart = (
   event: React.DragEvent<HTMLDivElement>,
   itemId: string,
@@ -119,11 +126,22 @@ function DraggableDiv() {
                 // style={springProps}
               >
                 <div className="flex justify-between items-center">
-                  <span>{item.content}</span>
+                  <TooltipProvider delayDuration={100}>
+                    <Tooltip>
+                      <TooltipTrigger className="text-left w-[75%] truncate ...">
+                        {item.content}
+                      </TooltipTrigger>
+                      <TooltipContent className=" max-w-[320px] p-4 bg-slate-900 backdrop-filter backdrop-blur-lg bg-opacity-90 leading-5 ">
+                        {item.content}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+
+                  {/* <span className="w-[75%] truncate ...">{item.content}</span> */}
                   <Button
                     size="sm"
                     onClick={() => handleDelete(columnId, item.id)}
-                    className="ml-2 text-red-500 hover:text-red-700 bg-transparent text-gray-200 hover:text-gray-200"
+                    className="ml-2 text-red-500 hover:text-red-700 bg-transparent "
                   >
                     ×
                   </Button>
